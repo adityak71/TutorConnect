@@ -7,7 +7,7 @@ const {
   uploadDocument,
   getUserById,
   setUserStatus,
-} = require('../controllers/userController');
+} = require('./userController');
 const { protect, authorize } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 

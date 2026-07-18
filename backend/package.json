@@ -2,10 +2,10 @@
   "name": "tutorconnect-auth-service",
   "version": "1.0.0",
   "description": "TutorConnect - Member 1: Authentication & User Management module",
-  "main": "server.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node src/app.js",
+    "dev": "node src/app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

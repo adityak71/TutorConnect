@@ -1,7 +1,7 @@
 const crypto = require('crypto');
-const User = require('../models/User');
-const TutorProfile = require('../models/TutorProfile');
-const StudentProfile = require('../models/StudentProfile');
+const User = require('../users/User');
+const TutorProfile = require('../tutors/TutorProfile');
+const StudentProfile = require('../users/StudentProfile');
 const { sendTokenResponse } = require('../utils/generateToken');
 const sendEmail = require('../utils/sendEmail');
 

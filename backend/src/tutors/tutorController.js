@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const TutorProfile = require('../models/TutorProfile');
+const User = require('../users/User');
+const TutorProfile = require('./TutorProfile');
 
 // @desc    Get all tutors (with optional filtering by subject, search)
 // @route   GET /tutors

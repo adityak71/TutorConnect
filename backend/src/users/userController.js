@@ -1,6 +1,6 @@
-const User = require('../models/User');
-const TutorProfile = require('../models/TutorProfile');
-const StudentProfile = require('../models/StudentProfile');
+const User = require('./User');
+const TutorProfile = require('../tutors/TutorProfile');
+const StudentProfile = require('./StudentProfile');
 
 // @desc    Get logged-in user's full profile (User + Tutor/Student profile)
 // @route   GET /users/profile
