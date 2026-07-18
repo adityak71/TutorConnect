@@ -1,7 +1,12 @@
-# TutorConnect — Auth, User Management & Session Scheduling
+# TutorConnect — Backend API
 
-This module covers everything assigned to Member 1 and Member 2 of the TutorConnect project:
-JWT authentication, profile management, tutor availability, session booking, double-booking prevention, and calendar history.
+## Member 1: Authentication & User Management
+This module covers everything assigned to Member 1 of the TutorConnect project:
+JWT authentication, registration/login/logout, password reset, role-based authorization, and profile management for Students, Tutors, and Admins.
+
+## Member 2: Session Booking & Scheduling
+This module covers everything assigned to Member 2 of the TutorConnect project:
+Tutor availability, session booking, double-booking prevention, and calendar history.
 
 ## Tech Stack
 - **Node.js + Express** — REST API
@@ -75,7 +80,9 @@ Server runs on `http://localhost:5000` by default.
 
 ## API Endpoints
 
-### Auth (`/auth`)
+### Member 1 Endpoints
+
+#### Auth (`/auth`)
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | `/auth/register` | Public | Register as Student or Tutor. Body: `{ name, email, password, role, hourlyRate? }` |
@@ -85,7 +92,7 @@ Server runs on `http://localhost:5000` by default.
 | POST | `/auth/forgot-password` | Public | Body: `{ email }`. Sends reset link. |
 | PUT | `/auth/reset-password/:token` | Public | Body: `{ password }`. Sets new password. |
 
-### Users (`/users`)
+#### Users (`/users`)
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | GET | `/users/profile` | Private | Get logged-in user's profile (User + role-specific profile). |
@@ -95,19 +102,21 @@ Server runs on `http://localhost:5000` by default.
 | GET | `/users/:id` | Private (Admin) | Fetch any user by ID. |
 | PUT | `/users/:id/status` | Private (Admin) | Activate/deactivate a user. Body: `{ isActive }`. |
 
-### Tutors (`/tutors`) — public discovery, used by other members' modules too
+#### Tutors (`/tutors`) — public discovery, used by other members' modules too
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | GET | `/tutors` | Public | List verified tutors. Query: `subject, minRate, maxRate, search, page, limit`. |
 | GET | `/tutors/:id` | Public | Get a single tutor's public profile. |
 
-### Availability (`/availability`)
+### Member 2 Endpoints
+
+#### Availability (`/availability`)
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | `/availability` | Private (Tutor) | Add a recurring availability block. Body: `{ dayOfWeek, startTime, endTime }`. |
 | GET | `/availability/:tutorId` | Public | Get all availability slots for a specific tutor. |
 
-### Sessions (`/sessions`)
+#### Sessions (`/sessions`)
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | `/sessions/book` | Private (Student) | Book a tutoring session. Checks availability & overlap. Body: `{ tutorId, startTime, endTime, notes }`. |
