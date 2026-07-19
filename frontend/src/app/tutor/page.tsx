@@ -5,7 +5,7 @@ import { getSessions } from '@/services/api';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, DollarSign, Calendar, Star } from 'lucide-react';
+import { Users, DollarSign, Calendar, Star, Video } from 'lucide-react';
 
 export default function TutorDashboard() {
   const { user } = useAuth();
@@ -125,7 +125,7 @@ export default function TutorDashboard() {
                           <Star className="h-3 w-3 fill-current" />
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">"Great session! Explained the concepts very clearly and helped me solve the problems."</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">&ldquo;Great session! Explained the concepts very clearly and helped me solve the problems.&rdquo;</p>
                     </div>
                   </div>
                 ))}
