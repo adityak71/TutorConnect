@@ -244,4 +244,13 @@ export const addTutorAvailability = async (data: { dayOfWeek: string; startTime:
   return response.data;
 };
 
+export const uploadProfilePicture = async (formData: FormData) => {
+  const response = await api.post('/users/profile/picture', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
 export default api;

@@ -1,16 +1,17 @@
 "use client";
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCurrentUser, updateUserProfile, getTutorAvailability, addTutorAvailability } from '@/services/api';
-import { useState, useEffect } from 'react';
+import { getCurrentUser, updateUserProfile, getTutorAvailability, addTutorAvailability, uploadProfilePicture } from '@/services/api';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { User, BookOpen, Clock, Calendar, Check, AlertCircle, CalendarClock } from 'lucide-react';
+import { User, BookOpen, Clock, Calendar, Check, AlertCircle, CalendarClock, Camera, Loader2 } from 'lucide-react';
 
 export default function TutorProfilePage() {
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 1. Fetch current logged-in user profile details
   const { data: userResponse, isLoading: isUserLoading } = useQuery({
@@ -35,7 +36,9 @@ export default function TutorProfilePage() {
   const [subjects, setSubjects] = useState('');
   const [rate, setRate] = useState(30);
   const [experience, setExperience] = useState(1);
+  const [avatar, setAvatar] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -51,10 +54,17 @@ export default function TutorProfilePage() {
   useEffect(() => {
     if (user) {
       setName(user.name || '');
-      setBio(user.bio || '');
-      setSubjects('');
-      setRate(30);
-      setExperience(1);
+      setBio(user.bio || user.profile?.bio || '');
+      setSubjects(user.profile?.subjects?.join(', ') || '');
+      setRate(user.profile?.hourlyRate || 30);
+      setExperience(user.profile?.experienceYears || 1);
+      
+      // Handle backend relative upload paths
+      let avatarUrl = user.avatar || '';
+      if (avatarUrl && avatarUrl.startsWith('/uploads')) {
+        avatarUrl = `http://localhost:5000${avatarUrl}`;
+      }
+      setAvatar(avatarUrl);
     }
   }, [user]);
 
@@ -87,6 +97,42 @@ export default function TutorProfilePage() {
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    const formData = new FormData();
+    formData.append('picture', file);
+
+    try {
+      const res = await uploadProfilePicture(formData);
+      if (res.success) {
+        let newAvatar = res.profilePicture;
+        if (newAvatar && newAvatar.startsWith('/uploads')) {
+          newAvatar = `http://localhost:5000${newAvatar}`;
+        }
+        setAvatar(newAvatar);
+        setSuccessMessage('Profile picture updated successfully!');
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      } else {
+        setErrorMessage(res.message || 'Failed to upload image.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.response?.data?.message || 'Upload failed. File type might be unsupported.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleAddSlot = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsAddingSlot(true);
@@ -109,14 +155,12 @@ export default function TutorProfilePage() {
     }
   };
 
-  // Seed default 9AM to 9PM availability for all days of the week
   const handleQuickSeed = async () => {
     setIsAddingSlot(true);
     setSlotError('');
     setSlotSuccess('');
 
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    let successCount = 0;
 
     for (const day of days) {
       try {
@@ -125,9 +169,7 @@ export default function TutorProfilePage() {
           startTime: '08:00',
           endTime: '22:00',
         });
-        successCount++;
       } catch (err) {
-        // Ignore duplicates, keep seeding others
         console.warn(`Day ${day} already has availability or failed:`, err);
       }
     }
@@ -152,7 +194,7 @@ export default function TutorProfilePage() {
     <div className="max-w-3xl mx-auto space-y-8 pb-12">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Profile & Availability</h1>
-        <p className="text-muted-foreground">Customize your tutor bio, hourly fee, and manage booking hours for student scheduling.</p>
+        <p className="text-muted-foreground">Customize your tutor avatar, bio, hourly fee, and manage scheduling hours.</p>
       </div>
 
       <div className="grid md:grid-cols-5 gap-8">
@@ -163,9 +205,38 @@ export default function TutorProfilePage() {
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5 text-primary" /> Profile Settings
               </CardTitle>
-              <CardDescription>Update your public tutor details and subjects.</CardDescription>
+              <CardDescription>Update your public tutor details and photo.</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
+              <div className="flex flex-col items-center gap-4 mb-6 border-b pb-6">
+                <div className="relative group cursor-pointer" onClick={triggerFileInput}>
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-background shadow-lg bg-muted flex items-center justify-center">
+                    {avatar ? (
+                      <img src={avatar} alt="Avatar Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-10 h-10 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {isUploading ? (
+                      <Loader2 className="w-6 h-6 text-white animate-spin" />
+                    ) : (
+                      <Camera className="w-6 h-6 text-white" />
+                    )}
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <Button variant="outline" size="sm" onClick={triggerFileInput} disabled={isUploading}>
+                  {isUploading ? 'Uploading...' : 'Change Profile Photo'}
+                </Button>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 {successMessage && (
                   <div className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-lg border border-green-200 text-center font-medium">
