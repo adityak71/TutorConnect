@@ -66,6 +66,11 @@ export const getSessions = async (role: string, userId: string) => {
   return { data: sessions };
 };
 
+export const bookSession = async (data: { tutorId: string; startTime: string; endTime: string; notes?: string }) => {
+  const response = await api.post('/sessions/book', data);
+  return response.data;
+};
+
 export const getCurrentUser = async () => {
   try {
     const response = await api.get('/users/profile');
