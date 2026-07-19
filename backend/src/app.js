@@ -11,6 +11,11 @@ const userRoutes = require('./users/userRoutes');
 const tutorRoutes = require('./tutors/tutorRoutes');
 const availabilityRoutes = require('./availability/availabilityRoutes');
 const sessionRoutes = require('./sessions/sessionRoutes');
+const paymentRoutes = require('./payments/paymentRoutes');
+const reviewRoutes = require('./reviews/reviewRoutes');
+const progressRoutes = require('./progress/progressRoutes');
+const dashboardRoutes = require('./dashboard/dashboardRoutes');
+const notificationRoutes = require('./notifications/notificationRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -77,6 +82,11 @@ app.use('/users', userRoutes);
 app.use('/tutors', tutorRoutes);
 app.use('/availability', availabilityRoutes);
 app.use('/sessions', sessionRoutes);
+app.use('/payments', paymentRoutes);
+app.use('/reviews', reviewRoutes);
+app.use('/progress', progressRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/notifications', notificationRoutes);
 
 // 404 handler
 app.use((req, res) => {
