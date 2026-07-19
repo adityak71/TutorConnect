@@ -38,12 +38,12 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
+    <header className="sticky top-4 z-50 w-full mx-auto max-w-7xl px-4 transition-all duration-300">
+      <div className="flex h-16 items-center justify-between px-6 rounded-2xl border border-white/20 dark:border-white/10 bg-white/70 dark:bg-black/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/40">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-primary text-primary-foreground p-1 rounded-lg">
-              <BookOpen className="h-6 w-6" />
+            <div className="bg-gradient-to-tr from-primary to-blue-400 text-white p-1.5 rounded-xl shadow-lg shadow-primary/30">
+              <BookOpen className="h-5 w-5" />
             </div>
             <span className="text-xl font-bold tracking-tight text-primary">TutorConnect</span>
           </Link>
