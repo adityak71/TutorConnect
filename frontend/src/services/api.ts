@@ -67,8 +67,14 @@ export const getSessions = async (role: string, userId: string) => {
 };
 
 export const getCurrentUser = async () => {
-  const response = await api.get('/users/profile');
-  const user = response.data.data;
+  await new Promise(resolve => setTimeout(resolve, 400));
+  if (typeof window === 'undefined') {
+    return { data: null };
+  }
+  const role = localStorage.getItem('tutorconnect_role') as Role | null;
+  if (!role) {
+    return { data: null };
+  }
   
   return { 
     data: { 
