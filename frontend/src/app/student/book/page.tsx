@@ -75,7 +75,10 @@ function BookingForm() {
     setErrorMessage('');
 
     try {
-      const startDateTime = new Date(`${date}T${time}`);
+      // Create date object literally in UTC to prevent timezone offset shifts
+      const [year, month, day] = date.split('-').map(Number);
+      const [hour, minute] = time.split(':').map(Number);
+      const startDateTime = new Date(Date.UTC(year, month - 1, day, hour, minute));
       const endDateTime = new Date(startDateTime.getTime() + duration * 60 * 60 * 1000);
 
       // 1. Submit session booking

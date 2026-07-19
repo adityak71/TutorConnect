@@ -39,6 +39,10 @@ const mapSession = (session: any): Session => {
     status = 'cancelled';
   }
 
+  const d = new Date(session.startTime);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const dateStr = `${pad(d.getUTCDate())}-${pad(d.getUTCMonth() + 1)}-${d.getUTCFullYear()}`;
+
   return {
     id: session._id,
     tutorId: tutorUser._id || session.tutor || '',
@@ -46,7 +50,7 @@ const mapSession = (session: any): Session => {
     tutorName: tutorUser.name || 'Tutor',
     studentName: studentUser.name || 'Student',
     subject: session.notes || 'Tutoring Session',
-    date: new Date(session.startTime).toLocaleDateString(),
+    date: dateStr,
     startTime: session.startTime,
     endTime: session.endTime,
     status,

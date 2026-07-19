@@ -86,7 +86,11 @@ export default function TutorDashboard() {
                       <div>
                         <p className="font-semibold text-foreground">Session with {session.studentName || session.studentId}</p>
                         <p className="text-sm text-muted-foreground mt-0.5">
-                          {new Date(session.startTime).toLocaleString()}
+                          {(() => {
+                            const d = new Date(session.startTime);
+                            const pad = (n: number) => String(n).padStart(2, '0');
+                            return `${pad(d.getUTCDate())}-${pad(d.getUTCMonth() + 1)}-${d.getUTCFullYear()} at ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+                          })()}
                         </p>
                       </div>
                     </div>

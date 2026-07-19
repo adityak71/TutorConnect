@@ -47,13 +47,18 @@ exports.bookSession = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Cannot book sessions in the past' });
     }
 
-    // Check tutor's recurring availability for this day of week
+    // Check tutor's recurring availability for this day of week (using UTC to be timezone-agnostic)
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayOfWeek = days[start.getDay()];
+    const dayOfWeek = days[start.getUTCDay()];
     
-    // Convert session times to HH:MM strings to compare with availability
-    const sessionStartStr = start.toTimeString().substring(0, 5);
-    const sessionEndStr = end.toTimeString().substring(0, 5);
+    // Convert session times to HH:MM strings in UTC
+    const startHour = String(start.getUTCHours()).padStart(2, '0');
+    const startMin = String(start.getUTCMinutes()).padStart(2, '0');
+    const endHour = String(end.getUTCHours()).padStart(2, '0');
+    const endMin = String(end.getUTCMinutes()).padStart(2, '0');
+    
+    const sessionStartStr = `${startHour}:${startMin}`;
+    const sessionEndStr = `${endHour}:${endMin}`;
 
     const isAvailable = await Availability.findOne({
       tutor: tutorId,

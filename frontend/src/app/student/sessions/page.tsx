@@ -129,7 +129,11 @@ export default function StudentSessionsPage() {
                           <h3 className="font-semibold text-lg">1-on-1 Lesson with {session.tutorName}</h3>
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground mt-1">
                             <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {session.date}</span>
-                            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {(() => {
+                               const d = new Date(session.startTime);
+                               const pad = (n: number) => String(n).padStart(2, '0');
+                               return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+                             })()}</span>
                             <span className="font-medium text-foreground">Topic: {session.subject}</span>
                           </div>
                         </div>
